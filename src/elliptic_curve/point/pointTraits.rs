@@ -5,11 +5,11 @@ use num_traits::{Zero,One};
 
 pub trait PointOperations{
 
-    fn multiply(&self, other:Self, n:BigInt) -> Self;
+    fn multiply(&self, n:BigInt) ->Self;
 
-    fn double(&self, other:Self) -> Self;
+    fn double(&self) -> Self;
 
-    fn add(&self , other:Self) -> Self;
+    fn add(&self , other: Self) -> Self;
 
 }
 

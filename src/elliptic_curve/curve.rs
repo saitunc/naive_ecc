@@ -22,6 +22,7 @@ impl CurveElement{
 
     pub fn double(&self) //-> Self
     {
+        
     
     }
 

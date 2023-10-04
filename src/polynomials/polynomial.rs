@@ -27,11 +27,11 @@ impl Add for Polynomial<FieldElement>{
         let mut result = Polynomial{coefficients:vec![FieldElement::new(BigInt::zero(),first_poly[0].get_prime().clone()).unwrap();max_length]};
 
         for i in 0..l1{
-            result.coefficients[i] = (result.coefficients[i].clone() + self.coefficients[i].clone()).unwrap(); 
+            result.coefficients[i] = (result.coefficients[i].clone() + self.coefficients[i].clone()); 
         }
 
         for i in 0..l2{
-            result.coefficients[i] = (&result.coefficients[i] + &other.coefficients[i]).unwrap(); 
+            result.coefficients[i] = (&result.coefficients[i] + &other.coefficients[i]); 
         }
 
         result
@@ -144,5 +144,4 @@ fn evaluate_polynomial(){
 
     println!("{}",result);
     
-
 }
