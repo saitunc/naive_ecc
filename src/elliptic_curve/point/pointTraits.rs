@@ -5,7 +5,7 @@ use num_traits::{Zero,One};
 
 pub trait PointOperations{
 
-    fn multiply(&self, n:BigInt) ->Self;
+    fn multiply(&self, n:isize) ->Self;
 
     fn double(&self) -> Self;
 

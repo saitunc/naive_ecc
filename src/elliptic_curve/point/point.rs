@@ -134,18 +134,19 @@ impl PointOperations for PointAffine<FieldElement>{
         let three = FieldElement::new_from_i32(3, self.get_x().get_prime().clone()).unwrap();
         let two = FieldElement::new_from_i32(2, self.get_x().get_prime().clone()).unwrap();
         let x = self.get_x().clone();
-        let y = self.get_x().clone();
+        let y = self.get_y().clone();
 
-        let slope = (three * self.get_x() * &x + self.get_a()) / (&two * &y);
+        let slope = ((three * &x * &x) + self.get_a()) / (&two * &y);
         
-        let x_r = &slope * &slope - &two* &x;
+        let x_r = (&slope * &slope) - &two * &x;
         
         let y_r = &slope*(&x - &x_r) - &y;
-        Self{values: [x_r,y_r],curve: [self.curve[0].clone(),self.curve[1].clone()]}
+        
+        Self{ values: [x_r ,y_r] , curve: [self.curve[0].clone(), self.curve[1].clone() ]}
 
     }
 
-    fn multiply(&self, n:BigInt) -> Self {
+    fn multiply(&self, mut n: isize) -> Self {
         let mut Q = self.clone();
 
         let prime = self.element_prime().clone();
@@ -155,23 +156,20 @@ impl PointOperations for PointAffine<FieldElement>{
             curve:[self.curve[0].clone(),self.curve[1].clone()]
         };
 
-        let mut n = n;
+        while n>0 {
+            let coeff= n % 2;
 
-        while !n.is_zero() {
-            let coeff: BigInt = &n % 2;
+            println!("{}, {}",coeff,n);
 
-            if(coeff.is_one()){
+            if coeff==1 {
+                println!("done");
                 R = R + &Q;
-                Q = Q.double();
-                
+
             }
-            
+            Q = Q.double();
             n = n/2;
-
-
         }       
         R
-
 
     }
 
@@ -215,7 +213,8 @@ impl Add<&PointAffine<FieldElement>> for PointAffine<FieldElement>{
 
 
     fn add(self, other:&PointAffine<FieldElement>) -> Self{
-        if(self.get_x().get_number() == &BigInt::from(0) && self.get_y().get_number() == &BigInt::from(0) ){
+        let vals = self.get_values();
+        if vals[0].get_number() == &BigInt::from(0) && vals[1].get_number() == &BigInt::from(0) {
             other.clone()
         }
         else if other.get_x() == &FieldElement::zero(self.element_prime()) && other.get_y() == &FieldElement::zero(self.element_prime()) {
@@ -236,20 +235,11 @@ impl Add<&PointAffine<FieldElement>> for PointAffine<FieldElement>{
         }
 
 
-
     }
 
 }
 
 
-
-
-#[test]
-fn multiply_point(){
-
-
-
-}
 
 
 #[test]
@@ -268,10 +258,37 @@ fn double_point(){
 
 
     let p1 = PointAffine::new(x,y,a.clone(),b.clone());
-    let p2 = PointAffine::new(x2,y2,a,b);
+    let p2 = PointAffine::new(x2,y2,a.clone(),b.clone());
 
     let doubled_p1 = p1.double();
-
+    
     assert_eq!(doubled_p1,p2);
     
+    
 }
+
+
+#[test]
+fn multiply_point(){
+
+    let x = FieldElement::new(BigInt::from(3_u32),BigInt::from(7_u32)).unwrap();
+    let y = FieldElement::new(BigInt::from(3_u32),BigInt::from(7_u32)).unwrap();
+
+
+    let a = FieldElement::new(BigInt::from(0_u32),BigInt::from(7_u32)).unwrap();
+    let b = FieldElement::new(BigInt::from(3_u32),BigInt::from(7_u32)).unwrap();
+
+
+    let x2 = FieldElement::new(BigInt::from(5_u32),BigInt::from(7_u32)).unwrap();
+    let y2 = FieldElement::new(BigInt::from(4_u32),BigInt::from(7_u32)).unwrap();
+
+
+    let p1 = PointAffine::new(x,y,a.clone(),b.clone());
+    let p2 = PointAffine::new(x2,y2,a,b);
+
+    let p1_5 = p1.multiply(4);
+
+    assert_eq!(p1_5,p2);
+    
+}
+
